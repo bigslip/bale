@@ -1,61 +1,136 @@
+// Wait for the window's "load" event before executing the script to ensure DOM and libraries are fully loaded
 window.addEventListener("load", () => {
-    const userDataEl = document.querySelector("#user_data");
+    // Select elements in our new layout to update user information dynamically
+    const valNameEl = document.querySelector("#val_name");
+    const valUsernameEl = document.querySelector("#val_username");
+    const valIdEl = document.querySelector("#val_id");
+    const avatarTextEl = document.querySelector("#avatar_text");
 
-    const closeBtnEl = document.querySelector("#close");
-    const expandBtnEl = document.querySelector("#expand");
-    const enableClosingConfirmationBtnEl = document.querySelector("#enableClosingConfirmation");
-    const requestContactBtnEl = document.querySelector("#requestContact");
+    // Select the newly designed interactive action cards
+    const closeCardEl = document.querySelector("#close");
+    const expandCardEl = document.querySelector("#expand");
+    const enableClosingConfirmationCardEl = document.querySelector("#enableClosingConfirmation");
+    const requestContactCardEl = document.querySelector("#requestContact");
 
-    const user = window.Bale.WebApp.initDataUnsafe.user;
+    // Safety check: verify if the Bale SDK is running in the native messenger environment
+    const isBaleEnv = window.Bale && window.Bale.WebApp && window.Bale.WebApp.initDataUnsafe;
 
-    userDataEl.innerHTML = `
-    ID: ${user.id} <br/>
-    First Name: ${user.first_name} <br/>
-    Username: ${user.username} <br/>
-    `;
+    // Retrieve user data if available, otherwise prepare a beautiful fallback mock environment for desktop browsers
+    let user = {
+        id: "42998877",
+        first_name: "Bale Developer",
+        username: "bale_dev_mode"
+    };
 
-    // Show Settings Button
-    window.Bale.WebApp.SettingsButton.show();
+    if (isBaleEnv && window.Bale.WebApp.initDataUnsafe.user) {
+        user = window.Bale.WebApp.initDataUnsafe.user;
+    }
 
-    // handle onClick event on SettingsButton
-    window.Bale.WebApp.onEvent("settingsButtonPressed", () => {
-        console.log("Handle onClick event on SettingsButton")
-    })
+    // Populate user profile info to the dynamic fields in our glassmorphic card
+    valNameEl.textContent = user.first_name || "Unknown User";
+    valUsernameEl.textContent = user.username ? `@${user.username}` : "Not Set";
+    valIdEl.textContent = user.id || "-";
 
-    // close miniapp
-    closeBtnEl.addEventListener("click", () => {
-        window.Bale.WebApp.close();
-    })
+    // Set high-fidelity profile avatar text initials
+    if (user.first_name) {
+        const initials = user.first_name.trim().split(" ");
+        if (initials.length >= 2) {
+            avatarTextEl.textContent = (initials[0][0] + initials[1][0]).toUpperCase();
+        } else if (initials[0]) {
+            avatarTextEl.textContent = initials[0].substring(0, 2).toUpperCase();
+        }
+    } else {
+        avatarTextEl.textContent = "BD";
+    }
 
-    // request user number
-    requestContactBtnEl.addEventListener("click", () => {
-        // result can be received with 2 ways:
-        // 1. passing callback function
-        window.Bale.WebApp.requestContact((wasShared)=>{
-            console.log("First way: ", wasShared ? "Number shared by user.": "Number not shared by user.")
+    // Initialize native settings button and event listener if available in Bale environment
+    if (isBaleEnv) {
+        // Show Bale settings button in the native navigation header
+        window.Bale.WebApp.SettingsButton.show();
+
+        // Listen for standard settings press event callback
+        window.Bale.WebApp.onEvent("settingsButtonPressed", () => {
+            console.log("Handle onClick event on SettingsButton");
         });
+    }
 
-        // 2. add event handler
-        window.Bale.WebApp.onEvent("contactRequested", (event) => {
-            const wasShared = event.status === "sent" ;
-            console.log("Second way: ", wasShared ?  "Number shared by user.": "Number not shared by user.")
-        })
-    })
-
-    // enable/disable closing confirmation
-    enableClosingConfirmationBtnEl.addEventListener("click", () => {
-        if(window.Bale.WebApp.isClosingConfirmationEnabled){
-            window.Bale.WebApp.disableClosingConfirmation();
-            enableClosingConfirmationBtnEl.textContent="enable closing confirmation"
+    // Listen to close card click trigger
+    closeCardEl.addEventListener("click", () => {
+        if (isBaleEnv) {
+            // Close the current Bale Mini App viewport session
+            window.Bale.WebApp.close();
+        } else {
+            alert("[Mock Environment] Close action card clicked. In native app, this shuts the Mini App.");
         }
-        else {
-            window.Bale.WebApp.enableClosingConfirmation();
-            enableClosingConfirmationBtnEl.textContent="disable closing confirmation"
-        }
-    })
+    });
 
-    // expand
-    expandBtnEl.addEventListener("click", () => {
-        window.Bale.WebApp.expand();
-    })
-})
+    // Listen to share contact card click trigger
+    requestContactCardEl.addEventListener("click", () => {
+        if (isBaleEnv) {
+            // Method 1: Callback response handling
+            window.Bale.WebApp.requestContact((wasShared) => {
+                console.log("Method 1 sharing state: ", wasShared ? "Shared" : "Not shared");
+            });
+
+            // Method 2: Global event handling
+            window.Bale.WebApp.onEvent("contactRequested", (event) => {
+                const wasShared = event.status === "sent";
+                console.log("Method 2 sharing state: ", wasShared ? "Shared" : "Not shared");
+            });
+        } else {
+            alert("[Mock Environment] Request Contact action card clicked.");
+        }
+    });
+
+    // Set closing confirmation initial active state on app load
+    let confirmationEnabled = false;
+    if (isBaleEnv) {
+        confirmationEnabled = window.Bale.WebApp.isClosingConfirmationEnabled;
+    }
+
+    // Local utility function to cleanly update closing confirmation UI states
+    const updateConfirmationUI = (enabled) => {
+        const confirmationTitle = document.querySelector("#confirmationText");
+        const confirmationDesc = enableClosingConfirmationCardEl.querySelector(".card-desc");
+        
+        if (enabled) {
+            enableClosingConfirmationCardEl.classList.add("active-state");
+            confirmationTitle.textContent = "Disable Close Alert";
+            confirmationDesc.textContent = "Closing confirmation is currently ACTIVE";
+        } else {
+            enableClosingConfirmationCardEl.classList.remove("active-state");
+            confirmationTitle.textContent = "Enable Close Alert";
+            confirmationDesc.textContent = "Confirm exit to prevent data loss";
+        }
+    };
+
+    // Execute initial state check to sync CSS class names
+    updateConfirmationUI(confirmationEnabled);
+
+    // Listen to clicks on the close confirmation toggle card
+    enableClosingConfirmationCardEl.addEventListener("click", () => {
+        if (isBaleEnv) {
+            if (window.Bale.WebApp.isClosingConfirmationEnabled) {
+                window.Bale.WebApp.disableClosingConfirmation();
+                updateConfirmationUI(false);
+            } else {
+                window.Bale.WebApp.enableClosingConfirmation();
+                updateConfirmationUI(true);
+            }
+        } else {
+            confirmationEnabled = !confirmationEnabled;
+            updateConfirmationUI(confirmationEnabled);
+            console.log("[Mock Environment] Closing confirmation status: ", confirmationEnabled);
+        }
+    });
+
+    // Listen to clicks on the expand card to maximize viewport space
+    expandCardEl.addEventListener("click", () => {
+        if (isBaleEnv) {
+            // Request the Bale container client to expand the view
+            window.Bale.WebApp.expand();
+        } else {
+            alert("[Mock Environment] Expand card clicked. In native app, this expands viewport to maximum.");
+        }
+    });
+});
