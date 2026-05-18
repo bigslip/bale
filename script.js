@@ -60,7 +60,13 @@ window.addEventListener("load", () => {
             // Close the current Bale Mini App viewport session
             window.Bale.WebApp.close();
         } else {
-            alert("[Mock Environment] Close action card clicked. In native app, this shuts the Mini App.");
+            if (confirmationEnabled) {
+                if (confirm("[Mock Environment] Are you sure you want to close the Mini App?")) {
+                    alert("[Mock Environment] Close action card clicked. In native app, this shuts the Mini App.");
+                }
+            } else {
+                alert("[Mock Environment] Close action card clicked. In native app, this shuts the Mini App.");
+            }
         }
     });
 
@@ -88,6 +94,12 @@ window.addEventListener("load", () => {
         confirmationEnabled = window.Bale.WebApp.isClosingConfirmationEnabled;
     }
 
+    const beforeUnloadHandler = (e) => {
+        e.preventDefault();
+        e.returnValue = "Are you sure you want to exit?";
+        return e.returnValue;
+    };
+
     // Local utility function to cleanly update closing confirmation UI states
     const updateConfirmationUI = (enabled) => {
         const confirmationTitle = document.querySelector("#confirmationText");
@@ -97,10 +109,16 @@ window.addEventListener("load", () => {
             enableClosingConfirmationCardEl.classList.add("active-state");
             confirmationTitle.textContent = "Disable Close Alert";
             confirmationDesc.textContent = "Closing confirmation is currently ACTIVE";
+            if (!isBaleEnv) {
+                window.addEventListener("beforeunload", beforeUnloadHandler);
+            }
         } else {
             enableClosingConfirmationCardEl.classList.remove("active-state");
             confirmationTitle.textContent = "Enable Close Alert";
             confirmationDesc.textContent = "Confirm exit to prevent data loss";
+            if (!isBaleEnv) {
+                window.removeEventListener("beforeunload", beforeUnloadHandler);
+            }
         }
     };
 
