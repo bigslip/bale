@@ -40,28 +40,28 @@
             </div>
             
             <div class="profile-details" id="user_data">
-                <div class="detail-row">
+                <div class="detail-row" data-copy-target="#val_name" data-copy-label="Name">
                     <span class="detail-label">
                         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
                         Name
                     </span>
                     <span class="detail-value" id="val_name">Loading...</span>
                 </div>
-                <div class="detail-row">
+                <div class="detail-row" data-copy-target="#val_username" data-copy-label="Username">
                     <span class="detail-label">
                         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
                         Username
                     </span>
                     <span class="detail-value" id="val_username">-</span>
                 </div>
-                <div class="detail-row">
+                <div class="detail-row" data-copy-target="#val_id" data-copy-label="User ID">
                     <span class="detail-label">
                         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                         User ID
                     </span>
                     <span class="detail-value" id="val_id">-</span>
                 </div>
-                <div class="detail-row">
+                <div class="detail-row" data-copy-target="#val_theme" data-copy-label="Theme Color">
                     <span class="detail-label">
                         <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.75-.39-1.04-.23-.29-.38-.68-.38-1.11 0-.83.67-1.5 1.5-1.5H15c2.76 0 5-2.24 5-5 0-4.42-3.58-8-8-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
                         Theme Color
@@ -73,14 +73,14 @@
                         </div>
                     </span>
                 </div>
-                <div class="detail-row">
+                <div class="detail-row" data-copy-target="#val_platform" data-copy-label="Client App">
                     <span class="detail-label">
                         <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
                         Client App
                     </span>
                     <span class="detail-value" id="val_platform">-</span>
                 </div>
-                <div class="detail-row">
+                <div class="detail-row" data-copy-target="#val_ip" data-copy-label="IP Address">
                     <span class="detail-label">
                         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
                         IP Address
@@ -203,7 +203,11 @@
                 <button type="button" id="clearConsoleBtn" class="clear-console-btn">Clear</button>
             </div>
             <div class="console-logs" id="consoleLogs">
-                <div class="log-entry system">[System] Bale Integration Console Ready.</div>
+                <div class="log-entry system">
+                    <span class="log-time">[00:00:00]</span>
+                    <span class="log-tag">[system]</span>
+                    <span class="log-msg">Bale Integration Console Ready.</span>
+                </div>
             </div>
         </div>
 
@@ -261,5 +265,8 @@
         </div>
         <div class="scanner-text">Scanning Target QR...</div>
     </div>
+
+    <!-- Modern Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
 </body>
 </html>

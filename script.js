@@ -41,14 +41,28 @@ window.addEventListener("load", () => {
         const timestamp = new Date().toLocaleTimeString();
         const logEntry = document.createElement("div");
         logEntry.className = `log-entry ${type}`;
-        logEntry.textContent = `[${timestamp}] ${message}`;
+        
+        // Beautifully typeset console element structure
+        logEntry.innerHTML = `
+            <span class="log-time">[${timestamp}]</span>
+            <span class="log-tag">[${type}]</span>
+            <span class="log-msg">${message}</span>
+        `;
+        
         consoleLogsEl.appendChild(logEntry);
         consoleLogsEl.scrollTop = consoleLogsEl.scrollHeight;
     };
 
     // Clear console output handler
     clearConsoleBtnEl.addEventListener("click", () => {
-        consoleLogsEl.innerHTML = '<div class="log-entry system">[System] Logs cleared.</div>';
+        const timestamp = new Date().toLocaleTimeString();
+        consoleLogsEl.innerHTML = `
+            <div class="log-entry system">
+                <span class="log-time">[${timestamp}]</span>
+                <span class="log-tag">[system]</span>
+                <span class="log-msg">Logs cleared.</span>
+            </div>
+        `;
     });
 
     // Retrieve user data if available, otherwise prepare a beautiful fallback mock environment for desktop browsers
@@ -125,6 +139,102 @@ window.addEventListener("load", () => {
             console.error('Error fetching IP:', error);
             if (valIpEl) valIpEl.textContent = 'Unavailable';
         });
+
+    // --- Click-to-Copy & Toast Notification System ---
+    const toastContainerEl = document.querySelector("#toastContainer");
+
+    const showToast = (message) => {
+        if (!toastContainerEl) return;
+        
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        
+        // Premium checkmark SVG icon
+        toast.innerHTML = `
+            <svg viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+            <span>${message}</span>
+        `;
+        
+        toastContainerEl.appendChild(toast);
+        
+        // Auto-remove toast from DOM after animations finish (matching 2.2s delay + 0.38s fade animation duration)
+        setTimeout(() => {
+            toast.remove();
+        }, 2600);
+    };
+
+    const copyToClipboard = (text, label) => {
+        if (!text || text === "-" || text === "Loading..." || text === "Fetching...") {
+            logToConsole(`Cannot copy empty or loading field: ${label}`, "error");
+            return;
+        }
+
+        const proceedWithCopy = () => {
+            logToConsole(`Copied ${label} ("${text}") to clipboard.`, "system");
+            showToast(`${label} copied to clipboard!`);
+            
+            // Soft programmatic haptic vibration pop for native mobile Bale environments
+            if (isBaleEnv && window.Bale.WebApp.HapticFeedback) {
+                try {
+                    window.Bale.WebApp.HapticFeedback.notificationOccurred("success");
+                } catch (e) {
+                    console.warn("Haptic feedback failed:", e);
+                }
+            }
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text)
+                .then(proceedWithCopy)
+                .catch(err => {
+                    console.error("Clipboard copy failed:", err);
+                    fallbackCopy(text, proceedWithCopy);
+                });
+        } else {
+            fallbackCopy(text, proceedWithCopy);
+        }
+    };
+
+    const fallbackCopy = (text, callback) => {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand("copy");
+            callback();
+        } catch (err) {
+            console.error("Fallback copy failed:", err);
+            logToConsole("Failed to copy text to clipboard.", "error");
+        }
+        document.body.removeChild(textArea);
+    };
+
+    // Attach click listeners to all detail rows containing data-copy-target attributes
+    const detailRows = document.querySelectorAll(".detail-row[data-copy-target]");
+    detailRows.forEach(row => {
+        row.addEventListener("click", () => {
+            const targetSelector = row.getAttribute("data-copy-target");
+            const label = row.getAttribute("data-copy-label");
+            const targetEl = document.querySelector(targetSelector);
+            
+            if (targetEl) {
+                let textToCopy = targetEl.textContent.trim();
+                
+                // Specialized copy logic adjustments
+                if (label === "Username" && textToCopy.startsWith("@")) {
+                    // Copy username without the '@' character for easier paste-and-search
+                    textToCopy = textToCopy.substring(1);
+                }
+                
+                copyToClipboard(textToCopy, label);
+            }
+        });
+    });
 
     // Initialize native settings button and event listener if available in Bale environment
     if (isBaleEnv) {
