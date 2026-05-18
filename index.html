@@ -176,6 +176,47 @@
                 <div class="log-entry system">[System] Bale Integration Console Ready.</div>
             </div>
         </div>
+
+        <!-- Tic Tac Toe Game Demo Section -->
+        <div class="game-card">
+            <div class="game-header">
+                <div class="game-title-wrapper">
+                    <svg viewBox="0 0 24 24" class="game-title-icon">
+                        <path d="M19 8h-4V4h-2v4H9V4H7v4H3v2h4v4H3v2h4v4h2v-4h4v4h2v-4h4v-2h-4v-4h4V8zm-6 6H9v-4h4v4z" />
+                    </svg>
+                    <span class="game-title">Tic-Tac-Toe Arena</span>
+                </div>
+                <div class="game-modes">
+                    <button type="button" id="gameModePvA" class="game-mode-btn active-mode">Vs AI</button>
+                    <button type="button" id="gameModeDemo" class="game-mode-btn">Auto-Demo</button>
+                </div>
+            </div>
+            
+            <div class="game-status" id="gameStatus">Your turn (Player X)</div>
+            
+            <div class="game-board-container">
+                <div class="game-board" id="gameBoard">
+                    <div class="game-cell" data-index="0"></div>
+                    <div class="game-cell" data-index="1"></div>
+                    <div class="game-cell" data-index="2"></div>
+                    <div class="game-cell" data-index="3"></div>
+                    <div class="game-cell" data-index="4"></div>
+                    <div class="game-cell" data-index="5"></div>
+                    <div class="game-cell" data-index="6"></div>
+                    <div class="game-cell" data-index="7"></div>
+                    <div class="game-cell" data-index="8"></div>
+                </div>
+            </div>
+            
+            <div class="game-controls">
+                <button type="button" id="resetGameBtn" class="reset-game-btn">
+                    <svg viewBox="0 0 24 24" class="btn-icon">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    Reset Game
+                </button>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -526,3 +526,274 @@ header p {
 .log-entry.error {
     color: #ff6b6b;
 }
+
+/* Tic-Tac-Toe Game Arena Styling */
+.game-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.game-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-emerald), var(--accent-teal));
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 12px;
+}
+
+.game-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.game-title-icon {
+    width: 20px;
+    height: 20px;
+    fill: var(--accent-emerald);
+}
+
+.game-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.game-modes {
+    display: flex;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 3px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+}
+
+.game-mode-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.game-mode-btn.active-mode {
+    background: linear-gradient(135deg, var(--accent-emerald), var(--accent-teal));
+    color: #0d1117;
+    box-shadow: 0 2px 8px rgba(0, 234, 144, 0.2);
+}
+
+.game-mode-btn:not(.active-mode):hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.game-status {
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-height: 22px;
+    transition: color 0.3s ease;
+}
+
+.game-status.highlight {
+    color: var(--accent-emerald);
+    text-shadow: 0 0 10px rgba(0, 234, 144, 0.3);
+}
+
+.game-status.thinking {
+    animation: statusPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes statusPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+.game-board-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 240px;
+    height: 240px;
+    position: relative;
+}
+
+.game-cell {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    user-select: none;
+}
+
+.game-cell:hover {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(0, 234, 144, 0.3);
+    box-shadow: 0 0 12px rgba(0, 234, 144, 0.1);
+    transform: translateY(-2px);
+}
+
+.game-cell:active {
+    transform: translateY(0);
+}
+
+.game-cell.taken {
+    cursor: not-allowed;
+}
+
+.game-cell.winning-cell {
+    background: linear-gradient(135deg, rgba(0, 234, 144, 0.15), rgba(0, 210, 196, 0.15));
+    border-color: var(--accent-emerald);
+    box-shadow: 0 0 15px rgba(0, 234, 144, 0.25);
+    animation: pulseWinCell 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseWinCell {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+/* X drawing icon styles */
+.cell-x {
+    width: 60%;
+    height: 60%;
+    position: relative;
+}
+
+.cell-x::before, .cell-x::after {
+    content: '';
+    position: absolute;
+    background: linear-gradient(135deg, var(--accent-emerald), var(--accent-teal));
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+/* X diagonal lines */
+.cell-x::before {
+    top: 0;
+    left: 45%;
+    width: 10%;
+    height: 100%;
+    transform: rotate(45deg);
+    animation: drawLine1 0.25s forwards cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.cell-x::after {
+    top: 45%;
+    left: 0;
+    width: 100%;
+    height: 10%;
+    transform: rotate(45deg);
+    animation: drawLine2 0.25s 0.15s forwards cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes drawLine1 {
+    from { height: 0%; opacity: 0; }
+    to { height: 100%; opacity: 1; }
+}
+
+@keyframes drawLine2 {
+    from { width: 0%; opacity: 0; }
+    to { width: 100%; opacity: 1; }
+}
+
+/* O drawing icon styles */
+.cell-o {
+    width: 50%;
+    height: 50%;
+    border: 5px solid #5b51d8;
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(91, 81, 216, 0.3);
+    animation: drawCircle 0.35s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center;
+}
+
+@keyframes drawCircle {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.game-controls {
+    display: flex;
+    justify-content: center;
+}
+
+.reset-game-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    color: var(--text-primary);
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reset-game-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-emerald);
+    color: var(--accent-emerald);
+    box-shadow: 0 4px 15px rgba(0, 234, 144, 0.15);
+    transform: translateY(-2px);
+}
+
+.reset-game-btn:hover .btn-icon {
+    fill: var(--accent-emerald);
+    transform: rotate(-180deg);
+}
+
+.reset-game-btn:active {
+    transform: translateY(0);
+}
+
+.btn-icon {
+    width: 16px;
+    height: 16px;
+    fill: var(--text-secondary);
+    transition: transform 0.4s ease, fill 0.3s ease;
+}

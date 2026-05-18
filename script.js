@@ -339,4 +339,296 @@ window.addEventListener("load", () => {
             alert("[Mock Environment] Expand card clicked. In native app, this expands viewport to maximum.");
         }
     });
+
+    // --- Tic-Tac-Toe Game Arena Logic ---
+    const gameBoardEl = document.querySelector("#gameBoard");
+    const gameCells = document.querySelectorAll(".game-cell");
+    const gameStatusEl = document.querySelector("#gameStatus");
+    const resetGameBtnEl = document.querySelector("#resetGameBtn");
+    const gameModePvAEl = document.querySelector("#gameModePvA");
+    const gameModeDemoEl = document.querySelector("#gameModeDemo");
+
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let isGameActive = true;
+    let currentPlayer = "X";
+    let gameMode = "PvA"; // "PvA" (vs AI) or "Demo" (Auto-play)
+    let demoTimeoutId = null;
+    let isAiThinking = false;
+
+    const winConditions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
+
+    // Helper logger dedicated to the game
+    const logGame = (message, type = "info") => {
+        logToConsole(`[TicTacToe] ${message}`, type);
+    };
+
+    // Update state text with options for pulse or highlight
+    const updateStatus = (message, highlight = false, thinking = false) => {
+        gameStatusEl.textContent = message;
+        if (highlight) {
+            gameStatusEl.classList.add("highlight");
+        } else {
+            gameStatusEl.classList.remove("highlight");
+        }
+        if (thinking) {
+            gameStatusEl.classList.add("thinking");
+        } else {
+            gameStatusEl.classList.remove("thinking");
+        }
+    };
+
+    // Check game results: wins or draws
+    const checkResult = () => {
+        let roundWon = false;
+        let winningLine = null;
+
+        for (let i = 0; i < winConditions.length; i++) {
+            const winCondition = winConditions[i];
+            let a = board[winCondition[0]];
+            let b = board[winCondition[1]];
+            let c = board[winCondition[2]];
+            if (a === "" || b === "" || c === "") {
+                continue;
+            }
+            if (a === b && b === c) {
+                roundWon = true;
+                winningLine = winCondition;
+                break;
+            }
+        }
+
+        if (roundWon) {
+            isGameActive = false;
+            highlightWinningCells(winningLine);
+            const winner = board[winningLine[0]];
+            
+            if (gameMode === "Demo") {
+                updateStatus(`Demo: Player ${winner} Wins! 👑`, true);
+                logGame(`Game Over: Player ${winner} wins the demo match!`, "info");
+                demoTimeoutId = setTimeout(restartGame, 2500);
+            } else {
+                if (winner === "X") {
+                    updateStatus("You Win! 🎉", true);
+                    logGame("Game Over: You defeated the AI!", "info");
+                } else {
+                    updateStatus("AI Wins! 🤖", false);
+                    logGame("Game Over: AI won the match.", "error");
+                }
+            }
+            return true;
+        }
+
+        const roundDraw = !board.includes("");
+        if (roundDraw) {
+            isGameActive = false;
+            updateStatus("It's a Draw! 🤝");
+            logGame("Game Over: Match ended in a draw.", "system");
+            if (gameMode === "Demo") {
+                demoTimeoutId = setTimeout(restartGame, 2500);
+            }
+            return true;
+        }
+
+        return false;
+    };
+
+    // Apply win styles to cells
+    const highlightWinningCells = (winningLine) => {
+        winningLine.forEach(index => {
+            gameCells[index].classList.add("winning-cell");
+        });
+    };
+
+    // Smart heuristic move decider for O (AI)
+    const getBestMove = () => {
+        // 1. Check if AI (O) can win on this move
+        for (let i = 0; i < winConditions.length; i++) {
+            const [a, b, c] = winConditions[i];
+            if (board[a] === "O" && board[b] === "O" && board[c] === "") return c;
+            if (board[a] === "O" && board[c] === "O" && board[b] === "") return b;
+            if (board[b] === "O" && board[c] === "O" && board[a] === "") return a;
+        }
+
+        // 2. Check if Player (X) can win and block them
+        for (let i = 0; i < winConditions.length; i++) {
+            const [a, b, c] = winConditions[i];
+            if (board[a] === "X" && board[b] === "X" && board[c] === "") return c;
+            if (board[a] === "X" && board[c] === "X" && board[b] === "") return b;
+            if (board[b] === "X" && board[c] === "X" && board[a] === "") return a;
+        }
+
+        // 3. Prefer the center square
+        if (board[4] === "") return 4;
+
+        // 4. Prefer empty corners
+        const corners = [0, 2, 6, 8];
+        const emptyCorners = corners.filter(index => board[index] === "");
+        if (emptyCorners.length > 0) {
+            return emptyCorners[Math.floor(Math.random() * emptyCorners.length)];
+        }
+
+        // 5. Prefer empty sides
+        const sides = [1, 3, 5, 7];
+        const emptySides = sides.filter(index => board[index] === "");
+        if (emptySides.length > 0) {
+            return emptySides[Math.floor(Math.random() * emptySides.length)];
+        }
+
+        return null;
+    };
+
+    // Executing the AI's move
+    const makeAiMove = () => {
+        if (!isGameActive) return;
+        isAiThinking = true;
+        updateStatus("AI is thinking...", false, true);
+
+        // Standard animated delay to make AI moves feel natural
+        setTimeout(() => {
+            const bestMove = getBestMove();
+            if (bestMove !== null) {
+                board[bestMove] = "O";
+                const cell = gameCells[bestMove];
+                cell.innerHTML = '<div class="cell-o"></div>';
+                cell.classList.add("taken");
+                logGame(`AI placed O on cell ${bestMove + 1}`, "system");
+
+                if (!checkResult()) {
+                    currentPlayer = "X";
+                    isAiThinking = false;
+                    updateStatus("Your turn (Player X)");
+                } else {
+                    isAiThinking = false;
+                }
+            }
+        }, 700);
+    };
+
+    // Demo gameplay autoplay loop
+    const makeDemoMove = () => {
+        if (!isGameActive || gameMode !== "Demo") return;
+
+        const emptyCells = board.map((val, idx) => val === "" ? idx : null).filter(val => val !== null);
+        if (emptyCells.length === 0) return;
+
+        let chosenMove;
+        if (currentPlayer === "X") {
+            // Player X moves somewhat randomly
+            chosenMove = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            board[chosenMove] = "X";
+            const cell = gameCells[chosenMove];
+            cell.innerHTML = '<div class="cell-x"></div>';
+            cell.classList.add("taken");
+            logGame(`Demo: Player X placed on cell ${chosenMove + 1}`, "info");
+
+            if (!checkResult()) {
+                currentPlayer = "O";
+                updateStatus("Demo: Player O's turn...", false, true);
+                demoTimeoutId = setTimeout(makeDemoMove, 800);
+            }
+        } else {
+            // Player O moves smart
+            chosenMove = getBestMove();
+            if (chosenMove === null && emptyCells.length > 0) {
+                chosenMove = emptyCells[0];
+            }
+            if (chosenMove !== null) {
+                board[chosenMove] = "O";
+                const cell = gameCells[chosenMove];
+                cell.innerHTML = '<div class="cell-o"></div>';
+                cell.classList.add("taken");
+                logGame(`Demo: Player O placed on cell ${chosenMove + 1}`, "system");
+
+                if (!checkResult()) {
+                    currentPlayer = "X";
+                    updateStatus("Demo: Player X's turn...", false, true);
+                    demoTimeoutId = setTimeout(makeDemoMove, 800);
+                }
+            }
+        }
+    };
+
+    // Game state restart cleaner
+    const restartGame = () => {
+        if (demoTimeoutId) {
+            clearTimeout(demoTimeoutId);
+            demoTimeoutId = null;
+        }
+
+        board = ["", "", "", "", "", "", "", "", ""];
+        isGameActive = true;
+        isAiThinking = false;
+        currentPlayer = "X";
+
+        gameCells.forEach(cell => {
+            cell.innerHTML = "";
+            cell.className = "game-cell";
+        });
+
+        if (gameMode === "Demo") {
+            updateStatus("Demo gameplay...", false, true);
+            logGame("Started new Auto-Demo simulation board.", "system");
+            demoTimeoutId = setTimeout(makeDemoMove, 600);
+        } else {
+            updateStatus("Your turn (Player X)");
+            logGame("PvP board reset. Your move!", "system");
+        }
+    };
+
+    // Human player cell click handler
+    const handleCellClick = (e) => {
+        if (gameMode === "Demo" || !isGameActive || isAiThinking) return;
+
+        const cell = e.currentTarget;
+        const index = parseInt(cell.getAttribute("data-index"));
+
+        if (board[index] !== "") return;
+
+        // Apply Player X's mark
+        board[index] = "X";
+        cell.innerHTML = '<div class="cell-x"></div>';
+        cell.classList.add("taken");
+        logGame(`You placed X on cell ${index + 1}`, "info");
+
+        if (!checkResult()) {
+            currentPlayer = "O";
+            makeAiMove();
+        }
+    };
+
+    // Game Mode selection switcher
+    const setGameMode = (mode) => {
+        if (gameMode === mode) return;
+        gameMode = mode;
+
+        if (mode === "PvA") {
+            gameModePvAEl.classList.add("active-mode");
+            gameModeDemoEl.classList.remove("active-mode");
+            logGame("Switched mode to Play vs AI.", "system");
+        } else {
+            gameModeDemoEl.classList.add("active-mode");
+            gameModePvAEl.classList.remove("active-mode");
+            logGame("Switched mode to Auto-Demo simulation.", "system");
+        }
+
+        restartGame();
+    };
+
+    // Event listeners registration
+    gameCells.forEach(cell => cell.addEventListener("click", handleCellClick));
+    resetGameBtnEl.addEventListener("click", restartGame);
+    gameModePvAEl.addEventListener("click", () => setGameMode("PvA"));
+    gameModeDemoEl.addEventListener("click", () => setGameMode("Demo"));
+
+    // Initial trigger
+    logGame("Arena active. Welcome!", "system");
 });
