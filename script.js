@@ -26,7 +26,7 @@ window.addEventListener("load", () => {
     const clearConsoleBtnEl = document.querySelector("#clearConsoleBtn");
 
     // Safety check: verify if the Bale SDK is running in the native messenger environment
-    const isBaleEnv = window.Bale && window.Bale.WebApp && window.Bale.WebApp.initDataUnsafe;
+    const isBaleEnv = window.Bale && window.Bale.WebApp && window.Bale.WebApp.isMiniAppSupported;
 
     // Local Mock Console Logging Helper
     const logToConsole = (message, type = "info") => {
