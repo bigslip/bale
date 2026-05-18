@@ -42,6 +42,7 @@ body {
     flex-direction: column;
     gap: 24px;
     padding-bottom: 40px;
+    position: relative;
 }
 
 /* Header styling */
@@ -312,4 +313,216 @@ header p {
 
 .action-card.active-state .card-icon-wrapper svg {
     fill: var(--accent-emerald);
+}
+
+/* Color Palette styles */
+.color-palette {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.color-swatch:hover {
+    transform: scale(1.15);
+}
+
+.color-swatch.active-swatch {
+    border-color: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
+}
+
+/* Input Card layout */
+.action-card.input-card {
+    grid-column: span 2;
+    cursor: default;
+}
+
+.action-card.input-card:hover {
+    transform: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    border-color: var(--card-border);
+}
+
+.action-card.input-card:hover::after {
+    background: none;
+}
+
+.card-input-wrapper {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.card-input-wrapper input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.card-input-wrapper input:focus {
+    border-color: var(--accent-emerald);
+    box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.card-input-wrapper button {
+    background: linear-gradient(135deg, var(--accent-emerald), var(--accent-teal));
+    border: none;
+    border-radius: 8px;
+    color: #0d1117;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.card-input-wrapper button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 234, 144, 0.3);
+}
+
+.card-input-wrapper button:active {
+    transform: translateY(0);
+}
+
+/* Mock Back Button */
+.mock-back-btn {
+    position: absolute;
+    top: 6px;
+    left: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.mock-back-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-emerald);
+    color: var(--accent-emerald);
+}
+
+.mock-back-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+/* Console Logs styles */
+.console-card {
+    background: rgba(10, 14, 20, 0.95);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.console-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 8px;
+}
+
+.console-title {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+}
+
+.clear-console-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clear-console-btn:hover {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.05);
+}
+
+.console-logs {
+    height: 150px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    padding-right: 4px;
+}
+
+/* Webkit Scrollbar */
+.console-logs::-webkit-scrollbar {
+    width: 6px;
+}
+.console-logs::-webkit-scrollbar-track {
+    background: transparent;
+}
+.console-logs::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+.console-logs::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.log-entry {
+    word-break: break-all;
+}
+
+.log-entry.system {
+    color: #8b949e;
+}
+
+.log-entry.event {
+    color: #5b51d8;
+}
+
+.log-entry.info {
+    color: #00ea90;
+}
+
+.log-entry.error {
+    color: #ff6b6b;
 }
