@@ -4,7 +4,12 @@ window.addEventListener("load", () => {
     const valNameEl = document.querySelector("#val_name");
     const valUsernameEl = document.querySelector("#val_username");
     const valIdEl = document.querySelector("#val_id");
+    const valThemeEl = document.querySelector("#val_theme");
+    const valThemeSwatchEl = document.querySelector("#val_theme_swatch");
+    const valPlatformEl = document.querySelector("#val_platform");
+    const valIpEl = document.querySelector("#val_ip");
     const avatarTextEl = document.querySelector("#avatar_text");
+    const avatarContainerEl = document.querySelector(".avatar-container");
 
     // Select the interactive action cards
     const closeCardEl = document.querySelector("#close");
@@ -59,8 +64,10 @@ window.addEventListener("load", () => {
     valUsernameEl.textContent = user.username ? `@${user.username}` : "Not Set";
     valIdEl.textContent = user.id || "-";
 
-    // Set high-fidelity profile avatar text initials
-    if (user.first_name) {
+    // Set high-fidelity profile avatar text initials or photo
+    if (user.photo_url) {
+        avatarContainerEl.innerHTML = `<img src="${user.photo_url}" alt="Profile Photo" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+    } else if (user.first_name) {
         const initials = user.first_name.trim().split(" ");
         if (initials.length >= 2) {
             avatarTextEl.textContent = (initials[0][0] + initials[1][0]).toUpperCase();
@@ -70,6 +77,51 @@ window.addEventListener("load", () => {
     } else {
         avatarTextEl.textContent = "BD";
     }
+
+    // Extract Theme and Platform Data
+    let platform = "Browser";
+    let version = "unknown";
+    let themeColor = null;
+
+    if (isBaleEnv) {
+        platform = window.Bale.WebApp.platform || platform;
+        version = window.Bale.WebApp.version || version;
+        
+        const themeParams = window.Bale.WebApp.themeParams;
+        if (themeParams) {
+            // Priority: button color > accent color > background color
+            themeColor = themeParams.button_color || themeParams.accent_text_color || themeParams.bg_color || null;
+        }
+    }
+    
+    if (valPlatformEl) {
+        // Capitalize platform
+        const platformCapped = platform.charAt(0).toUpperCase() + platform.slice(1);
+        valPlatformEl.textContent = version !== "unknown" ? `${platformCapped} (v${version})` : platformCapped;
+    }
+    
+    if (valThemeEl) {
+        if (themeColor) {
+            valThemeEl.textContent = themeColor.toUpperCase();
+            if (valThemeSwatchEl) {
+                valThemeSwatchEl.style.backgroundColor = themeColor;
+                valThemeSwatchEl.style.display = 'block';
+            }
+        } else {
+            valThemeEl.textContent = "Default";
+        }
+    }
+
+    // Fetch IP Address asynchronously
+    fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+            if (valIpEl) valIpEl.textContent = data.ip;
+        })
+        .catch(error => {
+            console.error('Error fetching IP:', error);
+            if (valIpEl) valIpEl.textContent = 'Unavailable';
+        });
 
     // Initialize native settings button and event listener if available in Bale environment
     if (isBaleEnv) {
