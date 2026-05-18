@@ -27,9 +27,9 @@
     /* Custom high-performance cubic-beziers */
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --transition-premium: all 0.4s var(--ease-out-expo);
-    --transition-medium: all 0.3s var(--ease-out-expo);
-    --transition-fast: all 0.2s var(--ease-out-expo);
+    --transition-premium: all 0.26s var(--ease-out-expo);
+    --transition-medium: all 0.18s var(--ease-out-expo);
+    --transition-fast: all 0.12s var(--ease-out-expo);
 }
 
 :root.light-theme {
@@ -114,7 +114,7 @@ body {
 header {
     text-align: center;
     margin-top: 10px;
-    animation: fadeSlideDown 0.8s var(--ease-out-expo) forwards;
+    animation: fadeSlideDown 0.45s var(--ease-out-expo) forwards;
 }
 
 header h1 {
@@ -149,8 +149,8 @@ header p {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
     position: relative;
     overflow: hidden;
-    animation: fadeSlideUp 0.8s var(--ease-out-expo) 0.1s both;
-    transition: background-color 0.6s var(--ease-out-expo), border-color 0.4s var(--ease-out-expo), transform 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo);
+    animation: fadeSlideUp 0.45s var(--ease-out-expo) 0.06s both;
+    transition: background-color 0.6s var(--ease-out-expo), border-color 0.4s var(--ease-out-expo), transform 0.26s var(--ease-out-expo), box-shadow 0.26s var(--ease-out-expo);
 }
 
 .profile-card::before {
@@ -810,8 +810,8 @@ header p {
     left: 45%;
     width: 10%;
     height: 100%;
-    transform: rotate(45deg);
-    animation: drawLine1 0.25s forwards cubic-bezier(0.19, 1, 0.22, 1);
+    transform: rotate(45deg) scaleY(0);
+    animation: drawLine1 0.18s var(--ease-out-expo) forwards;
 }
 
 .cell-x::after {
@@ -819,18 +819,18 @@ header p {
     left: 0;
     width: 100%;
     height: 10%;
-    transform: rotate(45deg);
-    animation: drawLine2 0.25s 0.12s forwards cubic-bezier(0.19, 1, 0.22, 1);
+    transform: rotate(45deg) scaleX(0);
+    animation: drawLine2 0.18s var(--ease-out-expo) 0.08s forwards;
 }
 
 @keyframes drawLine1 {
-    from { height: 0%; opacity: 0; }
-    to { height: 100%; opacity: 1; }
+    from { transform: rotate(45deg) scaleY(0); opacity: 0; }
+    to { transform: rotate(45deg) scaleY(1); opacity: 1; }
 }
 
 @keyframes drawLine2 {
-    from { width: 0%; opacity: 0; }
-    to { width: 100%; opacity: 1; }
+    from { transform: rotate(45deg) scaleX(0); opacity: 0; }
+    to { transform: rotate(45deg) scaleX(1); opacity: 1; }
 }
 
 /* O drawing icon styles with custom elastic animation */
@@ -840,12 +840,12 @@ header p {
     border: 5px solid #5b51d8;
     border-radius: 50%;
     box-shadow: 0 0 12px rgba(91, 81, 216, 0.3);
-    animation: cellPop 0.35s var(--ease-out-back) forwards;
+    animation: cellPop 0.28s var(--ease-out-back) forwards;
     transform-origin: center;
 }
 
 @keyframes cellPop {
-    0% { transform: scale(0); opacity: 0; }
+    0% { transform: scale(0.85); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
 }
 
@@ -1061,19 +1061,19 @@ header p {
 
 /* Staggered load delays for children elements */
 .actions-grid {
-    animation: fadeSlideUp 0.8s var(--ease-out-expo) 0.2s both;
+    animation: fadeSlideUp 0.45s var(--ease-out-expo) 0.14s both;
 }
 
 .console-card {
-    animation: fadeSlideUp 0.8s var(--ease-out-expo) 0.3s both;
+    animation: fadeSlideUp 0.45s var(--ease-out-expo) 0.18s both;
 }
 
 .game-card {
-    animation: fadeSlideUp 0.8s var(--ease-out-expo) 0.4s both;
+    animation: fadeSlideUp 0.45s var(--ease-out-expo) 0.22s both;
 }
 
 .section-title {
-    animation: fadeSlideUp 0.8s var(--ease-out-expo) 0.15s both;
+    animation: fadeSlideUp 0.45s var(--ease-out-expo) 0.1s both;
 }
 
 /* Tic-Tac-Toe AI Thinking Inline Spinner */
@@ -1091,4 +1091,20 @@ header p {
 
 @keyframes thinkingSpin {
     to { transform: rotate(360deg); }
+}
+
+/* Accessibility: Respect OS Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-delay: 0s !important;
+        animation-duration: 0s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0s !important;
+        scroll-behavior: auto !important;
+    }
+    header, .profile-card, .section-title, .actions-grid, .console-card, .game-card, .log-entry, .cell-x::before, .cell-x::after, .cell-o {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
 }

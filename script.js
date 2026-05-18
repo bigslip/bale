@@ -378,7 +378,7 @@ window.addEventListener("load", () => {
                     logToConsole("[Mock Environment] QR scanning cancelled by user.", "error");
                 }
             }
-        }, 1800);
+        }, 1200);
     });
 
     // --- Send Data to Bot ---
