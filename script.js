@@ -20,6 +20,9 @@ window.addEventListener("load", () => {
     // Select the new interactive capability cards
     const toggleBackButtonCardEl = document.querySelector("#toggleBackButtonCard");
     const mockBackButtonEl = document.querySelector("#mockBackButton");
+    const themeToggleBtnEl = document.querySelector("#themeToggleBtn");
+    const sunIconEl = themeToggleBtnEl.querySelector(".sun-icon");
+    const moonIconEl = themeToggleBtnEl.querySelector(".moon-icon");
     const headerColorCardEl = document.querySelector("#headerColorCard");
     const scanQrCardEl = document.querySelector("#scanQrCard");
     const sendDataCardEl = document.querySelector("#sendDataCard");
@@ -286,6 +289,22 @@ window.addEventListener("load", () => {
         } else {
             backButtonVisible = !backButtonVisible;
             updateBackButtonUI(backButtonVisible);
+        }
+    });
+
+    // --- Theme Toggle Button ---
+    themeToggleBtnEl.addEventListener("click", () => {
+        const root = document.documentElement;
+        if (root.classList.contains("light-theme")) {
+            root.classList.remove("light-theme");
+            sunIconEl.style.display = "none";
+            moonIconEl.style.display = "block";
+            logToConsole("Theme changed to Dark.", "system");
+        } else {
+            root.classList.add("light-theme");
+            sunIconEl.style.display = "block";
+            moonIconEl.style.display = "none";
+            logToConsole("Theme changed to Light.", "system");
         }
     });
 

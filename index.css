@@ -9,9 +9,42 @@
     --accent-emerald: #00ea90;
     --accent-teal: #00d2c4;
     --accent-glow: rgba(0, 234, 144, 0.15);
+    --bg-grad-1: rgba(0, 234, 144, 0.08);
+    --bg-grad-2: rgba(0, 210, 196, 0.08);
+    --row-bg: rgba(255, 255, 255, 0.03);
+    --row-bg-hover: rgba(255, 255, 255, 0.05);
+    --row-border: rgba(255, 255, 255, 0.02);
+    --icon-bg: rgba(255, 255, 255, 0.04);
+    --input-bg: rgba(0, 0, 0, 0.2);
+    --console-bg: rgba(10, 14, 20, 0.95);
+    --cell-bg: rgba(0, 0, 0, 0.25);
+    --btn-bg: rgba(255, 255, 255, 0.05);
+    --btn-bg-hover: rgba(255, 255, 255, 0.1);
     
     --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+:root.light-theme {
+    --bg-color: #f6f8fa;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(208, 215, 222, 0.8);
+    --text-primary: #1f2328;
+    --text-secondary: #656d76;
+    --accent-emerald: #059669;
+    --accent-teal: #0d9488;
+    --accent-glow: rgba(5, 150, 105, 0.15);
+    --bg-grad-1: rgba(5, 150, 105, 0.08);
+    --bg-grad-2: rgba(13, 148, 136, 0.08);
+    --row-bg: rgba(0, 0, 0, 0.02);
+    --row-bg-hover: rgba(0, 0, 0, 0.04);
+    --row-border: rgba(0, 0, 0, 0.05);
+    --icon-bg: rgba(0, 0, 0, 0.04);
+    --input-bg: #ffffff;
+    --console-bg: rgba(255, 255, 255, 0.9);
+    --cell-bg: rgba(0, 0, 0, 0.03);
+    --btn-bg: rgba(0, 0, 0, 0.05);
+    --btn-bg-hover: rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -23,8 +56,8 @@
 body {
     background-color: var(--bg-color);
     background-image: 
-        radial-gradient(at 0% 0%, rgba(0, 234, 144, 0.08) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(0, 210, 196, 0.08) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, var(--bg-grad-1) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, var(--bg-grad-2) 0px, transparent 50%);
     color: var(--text-primary);
     font-family: var(--font-body);
     min-height: 100vh;
@@ -135,14 +168,14 @@ header p {
     justify-content: space-between;
     align-items: center;
     padding: 10px 14px;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--row-bg);
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--row-border);
     transition: background 0.2s ease;
 }
 
 .detail-row:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--row-bg-hover);
 }
 
 .detail-label {
@@ -249,7 +282,7 @@ header p {
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--icon-bg);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -367,7 +400,7 @@ header p {
 
 .card-input-wrapper input {
     flex: 1;
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--input-bg);
     border: 1px solid var(--card-border);
     border-radius: 8px;
     padding: 8px 12px;
@@ -437,7 +470,7 @@ header p {
 
 /* Console Logs styles */
 .console-card {
-    background: rgba(10, 14, 20, 0.95);
+    background: var(--console-bg);
     border: 1px solid var(--card-border);
     border-radius: 20px;
     padding: 16px;
@@ -466,7 +499,7 @@ header p {
 
 .clear-console-btn {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--card-border);
     color: var(--text-secondary);
     border-radius: 6px;
     padding: 4px 8px;
@@ -584,7 +617,7 @@ header p {
 .game-modes {
     display: flex;
     gap: 6px;
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--cell-bg);
     padding: 3px;
     border-radius: 10px;
     border: 1px solid var(--card-border);
@@ -654,7 +687,7 @@ header p {
 }
 
 .game-cell {
-    background: rgba(0, 0, 0, 0.25);
+    background: var(--cell-bg);
     border: 1px solid var(--card-border);
     border-radius: 12px;
     display: flex;
@@ -762,7 +795,7 @@ header p {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--btn-bg);
     border: 1px solid var(--card-border);
     color: var(--text-primary);
     border-radius: 12px;
@@ -775,7 +808,7 @@ header p {
 }
 
 .reset-game-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--btn-bg-hover);
     border-color: var(--accent-emerald);
     color: var(--accent-emerald);
     box-shadow: 0 4px 15px rgba(0, 234, 144, 0.15);
@@ -796,4 +829,38 @@ header p {
     height: 16px;
     fill: var(--text-secondary);
     transition: transform 0.4s ease, fill 0.3s ease;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    position: absolute;
+    top: 6px;
+    right: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    background: var(--btn-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.theme-toggle-btn:hover {
+    background: var(--btn-bg-hover);
+    border-color: var(--accent-emerald);
+}
+
+.theme-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover svg {
+    fill: var(--accent-emerald);
 }
