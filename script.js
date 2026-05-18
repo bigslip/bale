@@ -295,6 +295,13 @@ window.addEventListener("load", () => {
     // --- Theme Toggle Button ---
     themeToggleBtnEl.addEventListener("click", () => {
         const root = document.documentElement;
+        
+        // Dynamic tactile rotation pop on click
+        themeToggleBtnEl.style.transform = "scale(0.8) rotate(-90deg)";
+        setTimeout(() => {
+            themeToggleBtnEl.style.transform = "";
+        }, 220);
+
         if (root.classList.contains("light-theme")) {
             root.classList.remove("light-theme");
             sunIconEl.style.display = "none";
@@ -338,25 +345,40 @@ window.addEventListener("load", () => {
 
     // --- Scan QR Code ---
     scanQrCardEl.addEventListener("click", () => {
-        logToConsole("Launching native QR Code Scanner popup...", "info");
-        if (isBaleEnv) {
-            // Method 1: standard callback response handling
-            window.Bale.WebApp.showScanQrPopup({ text: "Scan any QR code inside console demo" }, (text) => {
-                logToConsole(`QR Scanner Callback result: ${text}`, "info");
-            });
-
-            // Method 2: Global event callback (fallback and verification)
-            window.Bale.WebApp.onEvent("qrTextReceived", (event) => {
-                logToConsole(`QR Scanner Event data: ${event.data}`, "event");
-            });
-        } else {
-            const mockQr = prompt("[Mock Scanner] Enter text/URL payload to simulate a successful QR scan:");
-            if (mockQr !== null) {
-                logToConsole(`[Mock Environment] QR Code scanned: "${mockQr}"`, "info");
-            } else {
-                logToConsole("[Mock Environment] QR scanning cancelled by user.", "error");
-            }
+        const qrOverlay = document.querySelector("#qrScannerOverlay");
+        
+        logToConsole("Initializing optical scanning hardware...", "system");
+        
+        if (qrOverlay) {
+            qrOverlay.classList.add("active");
         }
+        
+        // Play sweeping laser animation for 1.8s to give premium tactile feedback
+        setTimeout(() => {
+            if (qrOverlay) {
+                qrOverlay.classList.remove("active");
+            }
+            
+            logToConsole("Launching native QR Code Scanner popup...", "info");
+            if (isBaleEnv) {
+                // Method 1: standard callback response handling
+                window.Bale.WebApp.showScanQrPopup({ text: "Scan any QR code inside console demo" }, (text) => {
+                    logToConsole(`QR Scanner Callback result: ${text}`, "info");
+                });
+
+                // Method 2: Global event callback (fallback and verification)
+                window.Bale.WebApp.onEvent("qrTextReceived", (event) => {
+                    logToConsole(`QR Scanner Event data: ${event.data}`, "event");
+                });
+            } else {
+                const mockQr = prompt("[Mock Scanner] Enter text/URL payload to simulate a successful QR scan:");
+                if (mockQr !== null && mockQr.trim() !== "") {
+                    logToConsole(`[Mock Environment] QR Code scanned: "${mockQr}"`, "info");
+                } else {
+                    logToConsole("[Mock Environment] QR scanning cancelled by user.", "error");
+                }
+            }
+        }, 1800);
     });
 
     // --- Send Data to Bot ---
@@ -444,16 +466,17 @@ window.addEventListener("load", () => {
 
     // Update state text with options for pulse or highlight
     const updateStatus = (message, highlight = false, thinking = false) => {
-        gameStatusEl.textContent = message;
+        if (thinking) {
+            gameStatusEl.innerHTML = `<span class="thinking-spinner"></span> ${message}`;
+            gameStatusEl.classList.add("thinking");
+        } else {
+            gameStatusEl.textContent = message;
+            gameStatusEl.classList.remove("thinking");
+        }
         if (highlight) {
             gameStatusEl.classList.add("highlight");
         } else {
             gameStatusEl.classList.remove("highlight");
-        }
-        if (thinking) {
-            gameStatusEl.classList.add("thinking");
-        } else {
-            gameStatusEl.classList.remove("thinking");
         }
     };
 
